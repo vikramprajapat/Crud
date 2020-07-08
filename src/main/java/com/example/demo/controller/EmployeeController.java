@@ -26,17 +26,18 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/employees")
 public class EmployeeController {
 
-	private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
 	EmployeeServies service;
 
-	@RequestMapping("/")
+	@RequestMapping("/")//for view web page
 	public ModelAndView viewHomePage(Model model) {		
-		logger.info("this is a info message");
+		
 		ModelAndView mav = new ModelAndView();
 		List<Employee> list = service.getAllEmployees();
 		model.addAttribute("employees", list);
+		logger.info("{this is a info message}",list);
 		mav.setViewName("list-employees");
 		return mav;
 
@@ -50,19 +51,11 @@ public class EmployeeController {
 		return mav;
 
 	}
-	@GetMapping("/Add")
-	public ModelAndView add(Model model,@PathVariable("id") Long id) throws RecordNotFoundException {		
-		ModelAndView mav = new ModelAndView();
-		Employee entity = service.getEmployeeById(id);	
-		model.addAttribute("employee", entity);
-		mav.setViewName("add-edit-employee");
-		return mav;
-
-	}
 
 	@GetMapping("/getList")//list for All employees
 	public ResponseEntity<List<Employee>> getAllEmployeesList() {
-		List<Employee> list = service.getAllEmployees();				
+		List<Employee> list = service.getAllEmployees();		
+		logger.info("{this is a info list }",list);
 		return new ResponseEntity<List<Employee>>(list, new HttpHeaders(), HttpStatus.OK);
 	}
 
@@ -72,7 +65,7 @@ public class EmployeeController {
 		return new ResponseEntity<Employee>(entity, new HttpHeaders(), HttpStatus.OK);
 	}
 
-	@PostMapping//new user save and update
+	@PostMapping("/save")//new user save and update
 	public ResponseEntity<Employee> saveEmployee(Employee employee) throws RecordNotFoundException {
 		Employee updated = service.createOrUpdateEmployee(employee);
 		return new ResponseEntity<Employee>(updated, new HttpHeaders(), HttpStatus.OK);
